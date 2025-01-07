@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import UserAuthContext from "../context/UserAuthContext";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { axiosInstance } from '../utils/axiosConfig';
+import { axiosInstance } from "../utils/axiosConfig";
+import UserAuthContext from "../context/UserAuthContext";
 const signinValidation = Yup.object({
   email: Yup.string().required("Email is required").email("Invalid Email"),
   password: Yup.string().required("Password is required").min(8).max(16),
@@ -12,7 +12,7 @@ const signinValidation = Yup.object({
 const UserLoggedIn = (props) => {
   const { userType } = props;
   const navigate = useNavigate();
-  const { setUser } = useContext(UserAuthContext);
+  const { loginUser } = useContext(UserAuthContext);
   const handleSubmit = async (values) => {
     console.log(values, "values");
     const { email, password } = values;
@@ -22,8 +22,7 @@ const UserLoggedIn = (props) => {
         password,
         type: userType,
       });
-      console.log(response.data.user, "response from admin");
-      setUser(response.data.user);
+      loginUser(response.data.user);
       toast.success("Logged in successfully");
 
       // Navigate based on the user role
