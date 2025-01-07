@@ -4,11 +4,30 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { axiosInstance } from "../utils/axiosConfig";
+import { FaInfoCircle } from "react-icons/fa";
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const passwordRegExp =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 const signupValidation = Yup.object({
   name: Yup.string().required("Name is required").min(4).max(16),
-  email: Yup.string().required("Email is required").email("Invalid email"),
-  phone: Yup.number().required("Number is required").min(10).max(10),
-  password: Yup.string().required("Password is required").min(8).max(16),
+  email: Yup.string()
+    .required("Email is required")
+    .matches(emailRegExp, "Invalid email format")
+    .email("Invalid email"),
+  phone: Yup.string()
+    .required("Number is required")
+    .length(10, "Phone Number must be 10 digits")
+    .matches(phoneRegExp, "Invalid Phone Number"),
+  password: Yup.string()
+    .required("Password is required")
+    .matches(
+      passwordRegExp,
+      "Password must contain at least 8 characters,Not a strong Password."
+    )
+    .min(8)
+    .max(16),
 });
 const Signup = () => {
   const navigate = useNavigate();
@@ -112,7 +131,7 @@ const Signup = () => {
                     className="text-red-600"
                   />
                 </div>
-                <div>
+                <div className="relative">
                   <label
                     htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900 "
@@ -124,14 +143,26 @@ const Signup = () => {
                     name="password"
                     id="password"
                     className={`bg-gray-50 border border-gray-300
-                     text-gray-900 text-sm rounded-lg focus:ring-primary-600  block w-full p-2.5  dark:placeholder-gray-400  dark:focus:ring-blue-500 `}
-                    placeholder="name@company.com"
+          text-gray-900 text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 dark:placeholder-gray-400 dark:focus:ring-blue-500`}
+                    placeholder="Enter your password"
                   />
                   <ErrorMessage
                     name="password"
                     component="div"
                     className="text-red-600"
                   />
+
+                  {/* Info Icon and Tooltip */}
+                  <div className="absolute top-[55%] right-2 transform -translate-y-1/2 cursor-pointer group">
+                    {/* Info Icon */}
+                    <FaInfoCircle className="text-gray-600 group-hover:text-blue-500" />
+
+                    {/* Tooltip */}
+                    <span className="tooltip absolute top-[-35px] right-0 bg-gray-700 text-white text-xs p-2 rounded opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      Password must be at least 8 characters long, contain one
+                      uppercase letter, one number, and one special character.
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex items-start"></div>
