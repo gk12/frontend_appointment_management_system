@@ -6,8 +6,17 @@ import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import PatientDashboardCalendar from "../../components/PatientDashboardCalendar";
 import { TiTick } from "react-icons/ti";
-import Pagination from '../../components/Pagination';
-import Loader from '../../components/Loader';
+import Pagination from "../../components/Pagination";
+import Loader from "../../components/Loader";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import { emailRegExp, phoneRegExp } from "../../utils/validateWithRegax";
+import { ErrorBoundary } from "react-error-boundary";
+const validateBookAppointmentForm = Yup.object({
+  name: Yup.string().min(6).max(16),
+  email: Yup.string().required("Email is required").matches(emailRegExp),
+  phone: Yup.string().required("Phone Number is required").matches(phoneRegExp),
+});
 
 const AllAppointmentsPatient = () => {
   const [availabilityData, setAvailabilityData] = useState([]);
@@ -37,12 +46,6 @@ const AllAppointmentsPatient = () => {
   const [currentMonthData, setCurrentMonthData] = useState(
     currentDate.getMonth()
   );
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
-
   function dayDate(timestamp) {
     const date = new Date(timestamp);
     const day = date.toLocaleString("en-US", { weekday: "long" });
@@ -74,14 +77,7 @@ const AllAppointmentsPatient = () => {
     setIsLoading(true);
     setAvailabilityData(null);
 
-    console.log(selectedDate, currentMonth, "month and date");
     try {
-      // const response = await axios.get(
-      //   `${baseUrl}api/getTherapistAvailability?status=none&specialty=${selectedSpecialty}&region=${selectedRegion}&date=${
-      //     selectedDate !== null ? selectedDate : " "
-      //   }&pageNo=${pageNo}&currentMonth=${currentMonth}&appointmentType=${appointmentType}`
-      // );
-
       const response = await axiosInstance.get(
         `api/patient/showAppointmentAvailability?pageNo=${pageNo}&appointmentType=${appointmentType}&specialty=${selectedSpecialty}&region=${selectedRegion}&date=${selectedDate}&month=${currentMonth}`
       );
@@ -138,28 +134,15 @@ const AllAppointmentsPatient = () => {
     return monthVal[(month + 12) % 12];
   }
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    if (name === "email") {
-      validateEmail(value);
-    } else if (name === "phone") {
-      validatePhone(value);
-    }
-  }
-  async function handleBookAppointment(e) {
-    e.preventDefault();
-    console.log(formData, "formData");
+  async function handleBookAppointment(values) {
+    const { name, email, phone } = values;
     setLoadingBookAppointment(true);
     try {
       const requestBody = {
         id: selectedData.selectedItemId,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
+        name: name,
+        email: email,
+        phone: phone,
       };
       const response = await axiosInstance.post(
         "api/patient/bookAppointment",
@@ -170,11 +153,6 @@ const AllAppointmentsPatient = () => {
       } else {
         toast.error("Failed to book the appointment.");
       }
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-      });
       setLoadingBookAppointment(false);
       TherapistAvailability(currentPage);
       setToggleModel(false);
@@ -182,23 +160,6 @@ const AllAppointmentsPatient = () => {
       toast.error(error);
     }
   }
-
-  // form Validation
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setIsEmailValid(emailRegex.test(email));
-  };
-
-  const validatePhone = (phone) => {
-    const phoneRegex = /^\d{10}$/; // Example: Validate 10 digits
-    setIsPhoneValid(phoneRegex.test(phone));
-  };
-
-  const isFormValid = () => {
-    // Form is valid if both email and phone are valid
-    return isEmailValid && isPhoneValid;
-  };
-
   const validatedMonth = () => {
     setCurrentMonth((prev) => {
       // Get the current date and extract the current year and month
@@ -445,77 +406,95 @@ const AllAppointmentsPatient = () => {
                 <h2 className="text-xl font-semibold text-center ">
                   Book Appointment
                 </h2>
-
-                <form onSubmit={handleBookAppointment} className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`mt-1 block w-full px-3 py-2 border ${
-                        isEmailValid ? "border-gray-300" : "border-red-500"
-                      } rounded-md`}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="phone"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Phone
-                    </label>
-                    <input
-                      type="number"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className={`mt-1 block w-full px-3 py-2 border ${
-                        isPhoneValid ? "border-gray-300" : "border-red-500"
-                      } rounded-md`}
-                    />
-                  </div>
-                  <div className="flex justify-end mt-4">
-                    <button
-                      type="submit"
-                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                      disabled={isLoading || !isFormValid()}
-                    >
-                      Submit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setToggleModel(false)}
-                      className="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </form>
+                <Formik
+                  initialValues={{
+                    name: "",
+                    email: "",
+                    phone: "",
+                  }}
+                  validationSchema={validateBookAppointmentForm}
+                  onSubmit={handleBookAppointment}
+                >
+                  <Form className="space-y-4">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Name
+                      </label>
+                      <Field
+                        type="text"
+                        id="name"
+                        name="name"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                      <ErrorBoundary
+                        name="name"
+                        component="div"
+                        className="text-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        className={`mt-1 block w-full px-3 py-2 border 
+                         border-gray-300
+                         rounded-md`}
+                      />
+                      <ErrorBoundary
+                        name="email"
+                        component="div"
+                        className="text-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Phone
+                      </label>
+                      <input
+                        type="number"
+                        id="phone"
+                        name="phone"
+                        className={`mt-1 block w-full px-3 py-2 border 
+                         "border-gray-300"
+                         rounded-md`}
+                      />
+                      <ErrorBoundary
+                        name="phone"
+                        component="div"
+                        className="text-red-500"
+                      />
+                    </div>
+                    <div className="flex justify-end mt-4">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                        // disabled={isLoading || !isFormValid()}
+                      >
+                        Submit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setToggleModel(false)}
+                        className="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </Form>
+                </Formik>
               </div>
             )}
           </div>
