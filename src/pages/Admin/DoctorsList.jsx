@@ -1,0 +1,344 @@
+import React, { useEffect, useState } from "react";
+import Pagination from '../../components/Pagination';
+import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../utils/axiosConfig';
+import { toast } from 'react-toastify';
+import Sidebar from '../../components/Sidebar';
+import Navbar from '../../components/Navbar';
+
+const DoctorsList = () => {
+  const navigate = useNavigate();
+  const [toggleModel, setToggleModel] = useState(false);
+  const [therapistList, setTherapistList] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalNoOfTherapist, setTotalTherapist] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    specialty: "",
+    region: "",
+    qualification: "",
+    yearOfExp: "",
+    type: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // post api add therapist here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // console.log(formData);
+    try {
+      const therapistData = await axiosInstance.post(
+        "api/admin/addDoctor",
+        formData
+      );
+      console.log("therapistData", therapistData);
+      setToggleModel(false);
+      toast.success("Therapist added successfully");
+    } catch (error) {
+      toast.error(error.response.data.error, "failed to add");
+      console.log(error, "error value");
+      setToggleModel(true);
+    }
+    fetchData(currentPage);
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      specialty: "",
+      region: "",
+      qualification: "",
+      yearOfExp: "",
+      type: "",
+      password: "",
+    });
+  };
+
+  const handlePageChange = (pageNo) => {
+    if (pageNo >= 1 && pageNo <= totalPages) {
+      fetchData(pageNo);
+      setCurrentPage(pageNo);
+    }
+  };
+  const fetchData = async (pageNo) => {
+    try {
+      const response = await axiosInstance.get(
+        `api/admin/showDoctors/?pageNo=${pageNo}`
+      );
+      console.log("response--", response.data);
+      setTherapistList(response.data.doctors);
+      setTotalPages(response.data.noOfPages);
+    } catch (err) {
+      console.log(err);
+      toast.error("Error while Fetching Data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
+
+  function showTherapistDetails(id) {
+    navigate(`/admin/therapistDetails/${id}`);
+    console.log(id, "abcd");
+  }
+  return (
+    <div className="w-full h-screen flex ">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <Navbar />
+        <div className="flex-1 bg-gray-100 p-6">
+          <div className="w-full overflow-hidden ">
+            <div className="w-full h-[30%]  ">
+              <div className="flex flex-grow">
+                <h1 className="font-bold text-3xl">Therapist</h1>
+              </div>
+              <div className="flex justify-end ">
+                <button
+                  onClick={() => setToggleModel(true)}
+                  className="bg-blue-600 rounded-md px-4 py-2 text-white"
+                >
+                  ADD
+                </button>
+              </div>
+              {toggleModel && (
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+                  <div className="w-[40%] max-w-lg bg-white p-6  rounded-md flex flex-col">
+                    <h2 className="text-xl font-semibold text-center mb-4">
+                      Add Therapist
+                    </h2>
+
+                    <form onSubmit={handleSubmit} className="space-y-1">
+                      <div>
+                        <label
+                          htmlFor="region"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Region
+                        </label>
+                        <select
+                          id="region"
+                          name="region"
+                          value={formData.region}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        >
+                          <option value="">Select</option>
+                          <option value="Northeast">Northeast</option>
+                          <option value="Midwest">Midwest</option>
+                          <option value="South">South</option>
+                          <option value="West">West</option>
+                          <option value="Southeast">Southeast</option>
+                          <option value="PacificNorthwest">
+                            Pacific Northwest
+                          </option>
+                          <option value="GreatPlains">Great Plains</option>
+                          <option value="RockyMountainRegion">
+                            Rocky Mountain Region
+                          </option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="specialty"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Specialty
+                        </label>
+                        <select
+                          id="specialty"
+                          name="specialty"
+                          value={formData.specialty}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        >
+                          <option value="">Select</option>
+                          <option value="CognitiveBehavioralTherapy(CBT)">
+                            Cognitive Behavioral Therapy (CBT)
+                          </option>
+                          <option value="TraumaTherapy">Trauma Therapy</option>
+                          <option value="MarriageandFamilyTherapy(MFT)">
+                            Marriage and Family Therapy (MFT)
+                          </option>
+                          <option value="BehaviorTherapy(DBT)">
+                            Behavior Therapy (DBT)
+                          </option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="email"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="qualification"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Qualifications
+                        </label>
+                        <input
+                          type="text"
+                          id="qualification"
+                          name="qualification"
+                          value={formData.qualification}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="yearOfExp"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          yearOfExp
+                        </label>
+                        <input
+                          type="number"
+                          id="yearOfExp"
+                          name="yearOfExp"
+                          value={formData.yearOfExp}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                      </div>
+
+                      <div className="flex justify-end mt-4">
+                        <button
+                          type="submit"
+                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                        >
+                          Submit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setToggleModel(false)}
+                          className="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+              <table className="w-full table-auto">
+                <thead>
+                  <tr className="h-10">
+                    <th className="font-bold p-2 text-left">sr no</th>
+                    <th className="font-bold p-2 text-left">Name</th>
+                    <th className="font-bold p-2 text-left">Email</th>
+                    <th className="font-bold p-2 text-left">Specialty</th>
+                    <th className="font-bold p-2 text-left">Qualifications</th>
+                    <th className="font-bold p-2 text-left">YearOfExp</th>
+                    <th className="font-bold p-2 text-left">Phone</th>
+                    <th className="font-bold p-2 text-left">Region</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {therapistList.map((data, index) => (
+                    <tr
+                      key={data._id}
+                      className="border-t cursor-pointer hover:bg-slate-200"
+                      onClick={() => showTherapistDetails(data._id)}
+                    >
+                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{data.name}</td>
+                      <td className="p-2">{data.email}</td>
+                      <td className="p-2">{data.specialty}</td>
+                      <td className="p-2">
+                        {data.qualification.toUpperCase()}
+                      </td>
+                      <td className="p-2">{data.yearOfExp}</td>
+                      <td className="p-2">{data.phone}</td>
+                      <td className="p-2">{data.region}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DoctorsList;
