@@ -5,9 +5,11 @@ import { addDays } from "react-datepicker/dist/date_utils";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import PatientDashboardCalendar from "../../components/PatientDashboardCalendar";
-import { TiTick } from 'react-icons/ti';
+import { TiTick } from "react-icons/ti";
+import Pagination from '../../components/Pagination';
+import Loader from '../../components/Loader';
 
-const AllAppointments = () => {
+const AllAppointmentsPatient = () => {
   const [availabilityData, setAvailabilityData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -523,4 +525,4 @@ const AllAppointments = () => {
   );
 };
 
-export default AllAppointments;
+export default AllAppointmentsPatient;
