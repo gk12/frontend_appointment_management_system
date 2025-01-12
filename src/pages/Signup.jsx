@@ -5,11 +5,9 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { axiosInstance } from "../utils/axiosConfig";
 import { FaInfoCircle } from "react-icons/fa";
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-const emailRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegExp =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+import { emailRegExp, passwordRegExp, phoneRegExp } from '../utils/validateWithRegax';
+
+
 const signupValidation = Yup.object({
   name: Yup.string().required("Name is required").min(4).max(16),
   email: Yup.string()
