@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
-import UserAuthContext from '../context/UserAuthContext';
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import UserAuthContext from "../context/UserAuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Navbar = () => {
       <div className="flex w-full justify-end">
         <button
           onClick={() => {
-            logout(), navigate("/signin");
+            logout, navigate("/signin");
           }}
           className=" w-[15%] rounded-lg bg-red-400 text-white font-bold text-lg"
         >
@@ -25,6 +25,6 @@ const Navbar = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Navbar
+export default Navbar;

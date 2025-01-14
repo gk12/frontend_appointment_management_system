@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
-import UserAuthContext from '../context/UserAuthContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from "react";
+import UserAuthContext from "../context/UserAuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const { user } = useContext(UserAuthContext);
