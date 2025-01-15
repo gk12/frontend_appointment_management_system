@@ -7,16 +7,9 @@ import Navbar from '../../components/Navbar';
 import Pagination from '../../components/Pagination';
 
 const MyAppointments = () => {
-  const [nameval, setName] = useState("adom");
-  const [emailval, setEmail] = useState("adom12@gmail");
-  const [dateval, setDate] = useState("28-nov-24");
-  const [startDate, setStartDate] = useState(new Date());
-  const [calenderView, setCalenderView] = useState(false);
   const [appointmentData, setAppointmentData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const userDetails = JSON.parse(localStorage.getItem("userDetails"));
-  const userId = userDetails?.userId;
   const { user } = useContext(UserAuthContext);
   async function myAppointmentsList(pageNo) {
     try {

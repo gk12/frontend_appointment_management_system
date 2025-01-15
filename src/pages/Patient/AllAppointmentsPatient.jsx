@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { axiosInstance } from "../../utils/axiosConfig";
 import { toast } from "react-toastify";
-import { addDays } from "react-datepicker/dist/date_utils";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import PatientDashboardCalendar from "../../components/PatientDashboardCalendar";
@@ -12,6 +11,7 @@ import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { emailRegExp, phoneRegExp } from "../../utils/validateWithRegax";
 import { ErrorBoundary } from "react-error-boundary";
+import { addDays } from "date-fns";
 const validateBookAppointmentForm = Yup.object({
   name: Yup.string().min(6).max(16),
   email: Yup.string().required("Email is required").matches(emailRegExp),
@@ -27,21 +27,16 @@ const AllAppointmentsPatient = () => {
   const [selectedRegion, setSelectedRegion] = useState("");
   const [minDate, setMinDate] = useState("");
   const [selectedSpecialty, setSelectSpecialty] = useState("");
-  const [selectedDateValue, setSelectedDateValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [dataFound, setDataFound] = useState(false);
   const [toggleModel, setToggleModel] = useState("");
 
   const currentDate = new Date();
-  const hasMounted = useRef(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [colorForCompletedMonth, setColorCompletedMonth] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedData, setSelectedData] = useState(null);
   const [appointmentType, setAppointmentType] = useState("all");
-  const [isEmailValid, setIsEmailValid] = useState(true);
-  const [isPhoneValid, setIsPhoneValid] = useState(true);
-  const [selectedMonthValue, setSelectedMonthValue] = useState("");
   const warningRef = useRef();
   const [currentMonthData, setCurrentMonthData] = useState(
     currentDate.getMonth()
