@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from "react";
-import Pagination from '../../components/Pagination';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
-import { useLocation } from 'react-router-dom';
-import { axiosInstance } from '../../utils/axiosConfig';
+import Pagination from "../../components/Pagination";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import { useLocation } from "react-router-dom";
+import { axiosInstance } from "../../utils/axiosConfig";
 
 const DoctorDetails = () => {
   const location = useLocation();
-  const [therapistDetailedData, setTherapistDetailedData] = useState([]);
-  const [therapistId, setTherapistId] = useState(
+  const [doctorDetailedData, setDoctorDetailedData] = useState([]);
+  const [doctorsId, setDoctorsId] = useState(
     location.pathname.split("/")[3]
   );
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const fetchTherapistDetailedData = async (pageNo) => {
+  const fetchDoctorsDetailedData = async (pageNo) => {
     try {
-      // const response = await axios.get(
-      //   `${baseUrl}api/showDoctorDetails?therapistId=${therapistId}&pageNo=${pageNo}`
-      // );
-
       const response = await axiosInstance.get(
-        `api/admin/showDoctorDetails/${therapistId}`
+        `api/admin/showDoctorDetails/${doctorsId}`
       );
-      console.log(
-        response.data.doctorsData,
-        "response99999999999999999999999999999999333333333333333333333333333"
-      );
-      setTherapistDetailedData(response.data.doctorsData);
+      setDoctorDetailedData(response.data.doctorsData);
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.log(error, "error");
@@ -34,12 +26,12 @@ const DoctorDetails = () => {
   };
 
   useEffect(() => {
-    fetchTherapistDetailedData(currentPage);
-  }, [therapistId]);
+    fetchDoctorsDetailedData(currentPage);
+  }, [doctorsId]);
 
   const handlePageChange = (pageNo) => {
     if (pageNo >= 1 && pageNo <= totalPages) {
-      fetchTherapistDetailedData(pageNo);
+      fetchDoctorsDetailedData(pageNo);
       setCurrentPage(pageNo);
     }
   };
@@ -97,7 +89,7 @@ const DoctorDetails = () => {
           <div className="w-full overflow-hidden ">
             <div className="w-full h-[30%]  ">
               <div className="flex flex-grow mb-2">
-                <h1 className="font-bold text-3xl">Therapist Detailed Data</h1>
+                <h1 className="font-bold text-3xl">Doctors Detailed Data</h1>
               </div>
               <table className="w-full table-auto">
                 <thead>
@@ -105,13 +97,13 @@ const DoctorDetails = () => {
                     <th className="font-bold p-2 text-left">sr no</th>
                     <th className="font-bold p-2 text-left">Patient Name</th>
                     <th className="font-bold p-2 text-left">Patient Email</th>
-                    <th className="font-bold p-2 text-left">Therapist Name</th>
-                    <th className="font-bold p-2 text-left">Therapist Email</th>
+                    <th className="font-bold p-2 text-left">Doctors Name</th>
+                    <th className="font-bold p-2 text-left">Doctors Email</th>
                     <th className="font-bold p-2 text-left">
-                      Therapist Specialty
+                      Doctors Specialty
                     </th>
                     <th className="font-bold p-2 text-left">
-                      Therapist Region
+                      Doctors Region
                     </th>
                     <th className="font-bold p-2 text-left">Date</th>
                     <th className="font-bold p-2 text-left">Time Slot</th>
@@ -119,11 +111,11 @@ const DoctorDetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {therapistDetailedData?.map((data, index) => (
+                  {doctorDetailedData?.map((data, index) => (
                     <tr key={index} className="border-t">
                       <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{data?.name}</td>
-                      <td className="p-2">{data?.email}</td>
+                      <td className="p-2">{data.name ? data.name : "-"}</td>
+                      <td className="p-2">{data.email ? data.email : "-"}</td>
                       <td className="p-2">{data?.createdBy?.name}</td>
                       <td className="p-2">{data?.createdBy?.email}</td>
                       <td className="p-2">{data?.createdBy?.specialty}</td>

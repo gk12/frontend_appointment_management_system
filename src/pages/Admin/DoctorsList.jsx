@@ -1,66 +1,68 @@
 import React, { useEffect, useState } from "react";
-import Pagination from '../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../../utils/axiosConfig';
-import { toast } from 'react-toastify';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
+import Pagination from "../../components/Pagination";
+import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../../utils/axiosConfig";
+import { toast } from "react-toastify";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import {
+  emailRegExp,
+  passwordRegExp,
+  phoneRegExp,
+} from "../../utils/validateWithRegax";
 
+const addDoctorFormValidation = Yup.object({
+  name: Yup.string().required("Name required").min(6).max(15),
+  email: Yup.string().required("Email required").matches(emailRegExp),
+  phone: Yup.string().required("Phone required").matches(phoneRegExp),
+  specialty: Yup.string().required("Specialty required"),
+  region: Yup.string().required("Region required"),
+  qualification: Yup.string().required("qualification required"),
+  yearOfExp: Yup.number().required("yearOfExp required").min(0),
+  password: Yup.string().required("Password required").matches(passwordRegExp),
+});
 const DoctorsList = () => {
   const navigate = useNavigate();
   const [toggleModel, setToggleModel] = useState(false);
-  const [therapistList, setTherapistList] = useState([]);
+  const [doctorsList, setDoctorsList] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalNoOfTherapist, setTotalTherapist] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    specialty: "",
-    region: "",
-    qualification: "",
-    yearOfExp: "",
-    type: "",
-    password: "",
-  });
-  const handleChange = (e) => {
-    const { value, name } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
 
-  // post api add therapist here
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // console.log(formData);
+  // post api add Doctors here
+  const handleSubmit = async (values) => {
+    console.log(values, "values");
+    const {
+      name,
+      email,
+      phone,
+      specialty,
+      region,
+      qualification,
+      yearOfExp,
+      password,
+    } = values;
     try {
-      const therapistData = await axiosInstance.post(
-        "api/admin/addDoctor",
-        formData
-      );
-      console.log("therapistData", therapistData);
+      const doctorsData = await axiosInstance.post("api/admin/addDoctor", {
+        name,
+        email,
+        phone,
+        specialty,
+        region,
+        qualification,
+        yearOfExp,
+        type: "Doctor",
+        password,
+      });
       setToggleModel(false);
-      toast.success("Therapist added successfully");
+      toast.success("Doctor added successfully");
     } catch (error) {
       toast.error(error.response.data.error, "failed to add");
       console.log(error, "error value");
       setToggleModel(true);
     }
     fetchData(currentPage);
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      specialty: "",
-      region: "",
-      qualification: "",
-      yearOfExp: "",
-      type: "",
-      password: "",
-    });
   };
 
   const handlePageChange = (pageNo) => {
@@ -75,7 +77,7 @@ const DoctorsList = () => {
         `api/admin/showDoctors/?pageNo=${pageNo}`
       );
       console.log("response--", response.data);
-      setTherapistList(response.data.doctors);
+      setDoctorsList(response.data.doctors);
       setTotalPages(response.data.noOfPages);
     } catch (err) {
       console.log(err);
@@ -87,8 +89,8 @@ const DoctorsList = () => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  function showTherapistDetails(id) {
-    navigate(`/admin/therapistDetails/${id}`);
+  function showDoctorsDetails(id) {
+    navigate(`/admin/doctorDetails/${id}`);
     console.log(id, "abcd");
   }
   return (
@@ -100,7 +102,7 @@ const DoctorsList = () => {
           <div className="w-full overflow-hidden ">
             <div className="w-full h-[30%]  ">
               <div className="flex flex-grow">
-                <h1 className="font-bold text-3xl">Therapist</h1>
+                <h1 className="font-bold text-3xl">Doctors</h1>
               </div>
               <div className="flex justify-end ">
                 <button
@@ -114,183 +116,216 @@ const DoctorsList = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
                   <div className="w-[40%] max-w-lg bg-white p-6  rounded-md flex flex-col">
                     <h2 className="text-xl font-semibold text-center mb-4">
-                      Add Therapist
+                      Add Doctor
                     </h2>
 
-                    <form onSubmit={handleSubmit} className="space-y-1">
-                      <div>
-                        <label
-                          htmlFor="region"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Region
-                        </label>
-                        <select
-                          id="region"
-                          name="region"
-                          value={formData.region}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        >
-                          <option value="">Select</option>
-                          <option value="Northeast">Northeast</option>
-                          <option value="Midwest">Midwest</option>
-                          <option value="South">South</option>
-                          <option value="West">West</option>
-                          <option value="Southeast">Southeast</option>
-                          <option value="PacificNorthwest">
-                            Pacific Northwest
-                          </option>
-                          <option value="GreatPlains">Great Plains</option>
-                          <option value="RockyMountainRegion">
-                            Rocky Mountain Region
-                          </option>
-                        </select>
-                      </div>
+                    <Formik
+                      initialValues={{
+                        name: "",
+                        email: "",
+                        phone: "",
+                        specialty: "",
+                        region: "",
+                        qualification: "",
+                        yearOfExp: "",
+                        password: "",
+                      }}
+                      validationSchema={addDoctorFormValidation}
+                      onSubmit={handleSubmit}
+                    >
+                      <Form className="space-y-1">
+                        <div>
+                          <label
+                            htmlFor="region"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Region
+                          </label>
+                          <Field
+                            as="select"
+                            id="region"
+                            name="region"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          >
+                            <option value="">Select</option>
+                            <option value="Northeast">Northeast</option>
+                            <option value="Midwest">Midwest</option>
+                            <option value="South">South</option>
+                            <option value="West">West</option>
+                            <option value="Southeast">Southeast</option>
+                            <option value="PacificNorthwest">
+                              Pacific Northwest
+                            </option>
+                            <option value="GreatPlains">Great Plains</option>
+                            <option value="RockyMountainRegion">
+                              Rocky Mountain Region
+                            </option>
+                          </Field>
+                        </div>
 
-                      <div>
-                        <label
-                          htmlFor="name"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Name
-                        </label>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="specialty"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Specialty
-                        </label>
-                        <select
-                          id="specialty"
-                          name="specialty"
-                          value={formData.specialty}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        >
-                          <option value="">Select</option>
-                          <option value="CognitiveBehavioralTherapy(CBT)">
-                            Cognitive Behavioral Therapy (CBT)
-                          </option>
-                          <option value="TraumaTherapy">Trauma Therapy</option>
-                          <option value="MarriageandFamilyTherapy(MFT)">
-                            Marriage and Family Therapy (MFT)
-                          </option>
-                          <option value="BehaviorTherapy(DBT)">
-                            Behavior Therapy (DBT)
-                          </option>
-                        </select>
-                      </div>
+                        <div>
+                          <label
+                            htmlFor="name"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Name
+                          </label>
+                          <Field
+                            type="text"
+                            id="name"
+                            name="name"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          <ErrorMessage
+                            name="name"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="specialty"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Specialty
+                          </label>
+                          <Field
+                            as="select"
+                            id="specialty"
+                            name="specialty"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          >
+                            <option value="">Select</option>
+                            <option value="CognitiveBehavioralTherapy(CBT)">
+                              Cognitive Behavioral Therapy (CBT)
+                            </option>
+                            <option value="TraumaTherapy">
+                              Trauma Therapy
+                            </option>
+                            <option value="MarriageandFamilyTherapy(MFT)">
+                              Marriage and Family Therapy (MFT)
+                            </option>
+                            <option value="BehaviorTherapy(DBT)">
+                              Behavior Therapy (DBT)
+                            </option>
+                          </Field>
+                        </div>
 
-                      <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="qualification"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Qualifications
-                        </label>
-                        <input
-                          type="text"
-                          id="qualification"
-                          name="qualification"
-                          value={formData.qualification}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
+                        <div>
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Email
+                          </label>
+                          <Field
+                            type="email"
+                            id="email"
+                            name="email"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          <ErrorMessage
+                            name="email"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="qualification"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Qualifications
+                          </label>
+                          <Field
+                            type="text"
+                            id="qualification"
+                            name="qualification"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          <ErrorMessage
+                            name="qualification"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
 
-                      <div>
-                        <label
-                          htmlFor="yearOfExp"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          yearOfExp
-                        </label>
-                        <input
-                          type="number"
-                          id="yearOfExp"
-                          name="yearOfExp"
-                          value={formData.yearOfExp}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="phone"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Phone Number
-                        </label>
-                        <input
-                          type="tel"
-                          id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
+                        <div>
+                          <label
+                            htmlFor="yearOfExp"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            yearOfExp
+                          </label>
+                          <Field
+                            type="number"
+                            id="yearOfExp"
+                            name="yearOfExp"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          <ErrorMessage
+                            name="yearOfExp"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="phone"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Phone Number
+                          </label>
+                          <Field
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          <ErrorMessage
+                            name="phone"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
 
-                      <div>
-                        <label
-                          htmlFor="password"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Password
-                        </label>
-                        <input
-                          type="password"
-                          id="password"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
+                        <div>
+                          <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Password
+                          </label>
+                          <Field
+                            type="password"
+                            id="password"
+                            name="password"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          <ErrorMessage
+                            name="password"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
 
-                      <div className="flex justify-end mt-4">
-                        <button
-                          type="submit"
-                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                        >
-                          Submit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setToggleModel(false)}
-                          className="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </form>
+                        <div className="flex justify-end mt-4">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                          >
+                            Submit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setToggleModel(false)}
+                            className="ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </Form>
+                    </Formik>
                   </div>
                 </div>
               )}
@@ -308,11 +343,11 @@ const DoctorsList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {therapistList.map((data, index) => (
+                  {doctorsList.map((data, index) => (
                     <tr
                       key={data._id}
                       className="border-t cursor-pointer hover:bg-slate-200"
-                      onClick={() => showTherapistDetails(data._id)}
+                      onClick={() => showDoctorsDetails(data._id)}
                     >
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{data.name}</td>
