@@ -110,7 +110,7 @@ const PatientDetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {patientList?.map((data, index) => (
+                  {patientDetailedData?.map((data, index) => (
                     <tr key={index} className="border-t">
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{data?.name}</td>

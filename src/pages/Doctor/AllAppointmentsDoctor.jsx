@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { axiosInstance } from '../../utils/axiosConfig';
-import { toast } from 'react-toastify';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
-import Pagination from '../../components/Pagination';
+import { axiosInstance } from "../../utils/axiosConfig";
+import { toast } from "react-toastify";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import Pagination from "../../components/Pagination";
 
 const AllAppointmentsDoctor = () => {
   const [appointments, setAppointments] = useState([]);
@@ -125,8 +125,8 @@ const AllAppointmentsDoctor = () => {
                   {appointments.map((data, index) => (
                     <tr key={index} className="border-t">
                       <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{data.name}</td>
-                      <td className="p-2">{data.email}</td>
+                      <td className="p-2">{data?.name}</td>
+                      <td className="p-2">{data?.email}</td>
                       <td className="p-2">{data.appointmentType}</td>
                       <td className="p-2">{DateTime(data.date)}</td>
                       <td className="p-2">
