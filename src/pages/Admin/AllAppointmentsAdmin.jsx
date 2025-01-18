@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
-import { axiosInstance } from '../../utils/axiosConfig';
-import Pagination from '../../components/Pagination';
+import React, { useEffect, useState } from "react";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import { axiosInstance } from "../../utils/axiosConfig";
+import Pagination from "../../components/Pagination";
 
 const AllAppointmentsAdmin = () => {
   const [totalPages, setTotalPages] = useState(0);
@@ -115,11 +115,11 @@ const AllAppointmentsAdmin = () => {
                   {appointments?.map((data, index) => (
                     <tr key={index} className="border-t">
                       <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{data?.name}</td>
-                      <td className="p-2">{data?.email}</td>
+                      <td className="p-2">{data?.name ? data?.name : "-"}</td>
+                      <td className="p-2">{data?.email ? data?.email : "-"}</td>
                       <td className="p-2">{data?.createdBy?.name}</td>
                       <td className="p-2">{data?.createdBy?.email}</td>
-                      <td className="p-2">{data.createdBy?.specialty}</td>
+                      <td className="p-2">{data?.createdBy?.specialty}</td>
                       {/* <td className="p-2">{data?.createdBy?.region}</td>
                       <td className="p-2">{DateTime(data.date)}</td>
                       <td className="p-2">
@@ -151,6 +151,6 @@ const AllAppointmentsAdmin = () => {
       </div>
     </div>
   );
-}
+};
 
-export default AllAppointmentsAdmin
+export default AllAppointmentsAdmin;

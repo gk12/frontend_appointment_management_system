@@ -26,7 +26,7 @@ const Signin = () => {
                   onClick={() => SetUserType("doctor")}
                   className="w-[8rem] border-2 border-black h-[3rem] rounded-md text-center p-2 text-white bg-gray-900 font-bold"
                 >
-                  Therapist
+                  Doctor
                 </button>
                 <button
                   onClick={() => SetUserType("admin")}

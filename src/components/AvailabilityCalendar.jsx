@@ -41,7 +41,7 @@ const AvailabilityCalendar = (props) => {
     <div>
       <Calendar
         localizer={localizer}
-        events={myEventsList}
+        events={eventListData}
         startAccessor="start"
         endAccessor="end"
         style={{ height: 600 }}
