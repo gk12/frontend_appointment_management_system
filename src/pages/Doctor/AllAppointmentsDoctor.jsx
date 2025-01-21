@@ -14,7 +14,7 @@ const AllAppointmentsDoctor = () => {
   const updateAppointmentStatus = async () => {
     try {
       console.log(newStatus, updateDataId, "newstatsus");
-      const response = await axiosInstance.patch(
+      const response = await axiosInstance.post(
         "api/doctor/updateAppointmentStatus",
         { id: updateDataId, status: newStatus }
       );
@@ -125,8 +125,8 @@ const AllAppointmentsDoctor = () => {
                   {appointments.map((data, index) => (
                     <tr key={index} className="border-t">
                       <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{data?.name}</td>
-                      <td className="p-2">{data?.email}</td>
+                      <td className="p-2">{data?.name ? data?.name : "-"}</td>
+                      <td className="p-2">{data?.email ? data?.email : "-"}</td>
                       <td className="p-2">{data.appointmentType}</td>
                       <td className="p-2">{DateTime(data.date)}</td>
                       <td className="p-2">
