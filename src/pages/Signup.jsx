@@ -5,8 +5,12 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { axiosInstance } from "../utils/axiosConfig";
 import { FaInfoCircle } from "react-icons/fa";
-import { emailRegExp, passwordRegExp, phoneRegExp } from '../utils/validateWithRegax';
-
+import {
+  emailRegExp,
+  passwordRegExp,
+  phoneRegExp,
+} from "../utils/validateWithRegax";
+import useDisableButton from "../hooks/useDisableButton";
 
 const signupValidation = Yup.object({
   name: Yup.string().required("Name is required").min(4).max(16),
@@ -27,9 +31,13 @@ const signupValidation = Yup.object({
     .min(8)
     .max(16),
 });
+
 const Signup = () => {
   const navigate = useNavigate();
+  const { buttonDisable, handleButtonDisablity, handleResetButton } =
+    useDisableButton();
   const handleSubmit = async (values) => {
+    handleButtonDisablity();
     // event.preventDefault();
     // Handle form submission logic here
     const { name, email, phone, password } = values;
@@ -47,6 +55,7 @@ const Signup = () => {
       toast.error(error);
       console.log(error);
     }
+    handleResetButton();
   };
   return (
     <section className="bg-gray-500  w-full h-screen">
@@ -166,6 +175,7 @@ const Signup = () => {
                 <div className="flex items-start"></div>
                 <button
                   type="submit"
+                  disabled={buttonDisable}
                   className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Create an account

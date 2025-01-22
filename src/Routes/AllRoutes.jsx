@@ -11,7 +11,8 @@ import ManageAvailabilityCalendar from "../pages/Doctor/ManageAvailabilityCalend
 import MyAvailability from "../pages/Doctor/MyAvailability";
 import AllAppointmentsPatient from "../pages/Patient/AllAppointmentsPatient";
 import MyAppointments from "../pages/Patient/MyAppointments";
-import AllAppointmentsAdmin from '../pages/Admin/AllAppointmentsAdmin';
+import AllAppointmentsAdmin from "../pages/Admin/AllAppointmentsAdmin";
+import VerifyEmail from "../pages/VerifyEmail";
 
 const AllRoutes = () => {
   return (
@@ -46,6 +47,7 @@ const AllRoutes = () => {
         element={<AllAppointmentsPatient />}
       ></Route>
       <Route path="/patient/myAppointmnet" element={<MyAppointments />}></Route>
+      <Route path="/verifyEmail/:token" element={<VerifyEmail />}></Route>
     </Routes>
   );
 };
