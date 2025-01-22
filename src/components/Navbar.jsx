@@ -4,7 +4,7 @@ import UserAuthContext from "../context/UserAuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useContext(UserAuthContext);
+  const { user, logoutUser } = useContext(UserAuthContext);
   return (
     <div className="w-full h-[6rem]  bg-white p-6 shadow-slate-800 shadow-2xl flex justify-between">
       <div className="p-2 ">
@@ -16,7 +16,7 @@ const Navbar = () => {
       <div className="flex w-full justify-end">
         <button
           onClick={() => {
-            logout, navigate("/signin");
+            logoutUser(), navigate("/signin");
           }}
           className=" w-[15%] rounded-lg bg-red-400 text-white font-bold text-lg"
         >
