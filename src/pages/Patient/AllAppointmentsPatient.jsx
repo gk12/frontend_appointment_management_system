@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import { emailRegExp, phoneRegExp } from "../../utils/validateWithRegax";
 import { ErrorBoundary } from "react-error-boundary";
 import { addDays } from "date-fns";
+import useDisableButton from "../../hooks/useDisableButton";
 const validateBookAppointmentForm = Yup.object({
   name: Yup.string().min(6).max(16),
   email: Yup.string().required("Email is required").matches(emailRegExp),
@@ -41,6 +42,8 @@ const AllAppointmentsPatient = () => {
   const [currentMonthData, setCurrentMonthData] = useState(
     currentDate.getMonth()
   );
+  const { handleButtonDisablity, handleResetButton, buttonDisable } =
+    useDisableButton();
   function dayDate(timestamp) {
     const date = new Date(timestamp);
     const day = date.toLocaleString("en-US", { weekday: "long" });
@@ -130,7 +133,9 @@ const AllAppointmentsPatient = () => {
   }
 
   async function handleBookAppointment(values) {
+    handleButtonDisablity();
     const { name, email, phone } = values;
+    console.log({ name, email, phone });
     setLoadingBookAppointment(true);
     try {
       const requestBody = {
@@ -154,6 +159,7 @@ const AllAppointmentsPatient = () => {
     } catch (error) {
       toast.error(error);
     }
+    handleResetButton();
   }
   const validatedMonth = () => {
     setCurrentMonth((prev) => {
@@ -437,7 +443,7 @@ const AllAppointmentsPatient = () => {
                       >
                         Email
                       </label>
-                      <input
+                      <Field
                         type="email"
                         id="email"
                         name="email"
@@ -458,7 +464,7 @@ const AllAppointmentsPatient = () => {
                       >
                         Phone
                       </label>
-                      <input
+                      <Field
                         type="number"
                         id="phone"
                         name="phone"
@@ -476,7 +482,7 @@ const AllAppointmentsPatient = () => {
                       <button
                         type="submit"
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                        // disabled={isLoading || !isFormValid()}
+                        disabled={buttonDisable}
                       >
                         Submit
                       </button>

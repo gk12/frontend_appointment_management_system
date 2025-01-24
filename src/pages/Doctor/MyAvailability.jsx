@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import Pagination from '../../components/Pagination';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
-import UserAuthContext from '../../context/UserAuthContext';
-import { axiosInstance } from '../../utils/axiosConfig';
-import { toast } from 'react-toastify';
+import Pagination from "../../components/Pagination";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import UserAuthContext from "../../context/UserAuthContext";
+import { axiosInstance } from "../../utils/axiosConfig";
+import { toast } from "react-toastify";
+import useDisableButton from "../../hooks/useDisableButton";
 
 const MyAvailability = () => {
   const { user } = useContext(UserAuthContext);
@@ -22,6 +23,8 @@ const MyAvailability = () => {
     appointmentType: "Consultation(45min)",
   });
 
+  const { handleButtonDisablity, handleResetButton, buttonDisable } =
+    useDisableButton();
   const handleChange = (e) => {
     const { value, name } = e.target;
     setFormData({
@@ -31,6 +34,7 @@ const MyAvailability = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    handleButtonDisablity();
     try {
       const { availableDate, timeSlot, appointmentType } = formData;
       const data = await axiosInstance.post("api/doctor/createAppointment", {
@@ -47,6 +51,7 @@ const MyAvailability = () => {
 
     console.log(formData);
     setToggleModel(false);
+    handleResetButton();
   };
   function DateTime(data) {
     const date = new Date(data);
@@ -157,41 +162,6 @@ const MyAvailability = () => {
                           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                       </div>
-
-                      {/* <div>
-                        <label
-                          htmlFor="name"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Name
-                        </label>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                        />
-                      </div> */}
-
                       <div>
                         <label
                           htmlFor="appointmentType"
@@ -218,6 +188,7 @@ const MyAvailability = () => {
                       <div className="flex justify-end mt-4">
                         <button
                           type="submit"
+                          disabled={buttonDisable}
                           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
                         >
                           Submit

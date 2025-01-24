@@ -1,23 +1,26 @@
-import React, { useContext, useState } from 'react'
-import UserAuthContext from '../../context/UserAuthContext';
-import { axiosInstance } from '../../utils/axiosConfig';
-import { toast } from 'react-toastify';
-import moment from 'moment';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
-import AvailabilityCalendar from '../../components/AvailabilityCalendar';
+import React, { useContext, useEffect, useState } from "react";
+import UserAuthContext from "../../context/UserAuthContext";
+import { axiosInstance } from "../../utils/axiosConfig";
+import { toast } from "react-toastify";
+import moment from "moment";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import AvailabilityCalendar from "../../components/AvailabilityCalendar";
+import useDisableButton from "../../hooks/useDisableButton";
 
 const ManageAvailabilityCalendar = () => {
   const [toggleModel, setToggleModel] = useState("");
   const [minDate, setMinDate] = useState("");
   const [eventListData, setEventListData] = useState([]);
   const { user } = useContext(UserAuthContext);
+  const [doctorId, setDoctorId] = useState(user?.id);
   const [formData, setFormData] = useState({
     availability: "true",
     startTime: "",
     endTime: "",
-    doctorId: user?.userType == "doctor" ? user?.id : "",
   });
+  const { handleButtonDisablity, handleResetButton, buttonDisable } =
+    useDisableButton();
   function handleChange(e) {
     const { name, value } = e.target;
     console.log(name, value);
@@ -28,44 +31,42 @@ const ManageAvailabilityCalendar = () => {
   }
   async function handleSubmit(e) {
     e.preventDefault();
+    handleButtonDisablity();
+    const { availability, startTime, endTime } = formData;
     try {
-      console.log(user?.userType, formData, "formData");
       const response = await axiosInstance.post(
         "api/doctor/createAvailability",
-        formData
+        { availability, startTime, endTime, doctorId }
       );
       setFormData({
         availability: "",
         startTime: "",
         endTime: "",
-        doctorId: "",
       });
+      setDoctorId("");
       setToggleModel(false);
       getCalendarData();
       toast.success("Availbility Added Successfully");
     } catch (error) {
       toast.error(error);
     }
+    handleResetButton();
   }
   async function getCalendarData() {
     try {
-      // const response = await axios.get(
-      //   `${baseUrl}api/getCalendarAvailabilityById?doctorId=${user?.id}`
-      // );
-      const response = ''
-      console.log(response.data.data);
-      // const {title,start,end}=
-      const mappedData = response?.data?.data.map((data) => ({
-        title: data.availability,
-        start: moment(data.startTime).toDate(),
-        end: moment(data.endTime).toDate(),
-      }));
-      setEventListData(mappedData);
-      console.log(
-        response.data.data,
-        "res data999999999999999222222222222222222222"
+      const response = await axiosInstance.get(
+        "api/doctor/showDoctorsAvailability"
       );
+      const mappedData = [response?.data?.doctorsAvailabilities].map(
+        (data) => ({
+          title: data.availability === true ? "Available Slots" : "",
+          start: moment(data.startDateTime).toDate(),
+          end: moment(data.endDateTime).toDate(),
+        })
+      );
+      setEventListData(mappedData);
     } catch (error) {
+      console.log(error, "erro");
       toast.error(error);
     }
   }
@@ -79,6 +80,10 @@ const ManageAvailabilityCalendar = () => {
   //   setMinDate(`${formattedDate}T${formattedTime}`);
   //   getCalendarData();
   // }, []);
+  useEffect(() => {
+    setDoctorId(user?.id);
+    getCalendarData();
+  }, [user]);
   return (
     <div className="w-full h-screen flex ">
       <Sidebar />
@@ -93,6 +98,7 @@ const ManageAvailabilityCalendar = () => {
                 </div>
                 <div className="flex justify-end">
                   <button
+                    disabled={buttonDisable}
                     onClick={() => setToggleModel(true)}
                     className="bg-blue-600 rounded-md px-4 py-2 text-white"
                   >
@@ -190,6 +196,6 @@ const ManageAvailabilityCalendar = () => {
       </div>
     </div>
   );
-}
+};
 
-export default ManageAvailabilityCalendar
+export default ManageAvailabilityCalendar;
