@@ -5,11 +5,15 @@ import { axiosInstance } from "../utils/axiosConfig";
 const UserAuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   async function authCheck() {
     setIsLoading(true);
     try {
       const response = await axiosInstance.get("api/me");
       setUser(response.data.data);
+      if (response.data.data) {
+        setIsAuthenticated(true);
+      }
     } catch (error) {
       setUser(null);
     } finally {
@@ -21,7 +25,8 @@ const UserAuthContextProvider = ({ children }) => {
     setUser(data);
   }
   async function logoutUser() {
-    const response = await axiosInstance.get("api/auth/logout");
+    console.log("logout");
+    const response = await axiosInstance.post("api/auth/logout");
     setUser(null);
   }
   useEffect(() => {
@@ -36,6 +41,7 @@ const UserAuthContextProvider = ({ children }) => {
         setUser,
         isLoading,
         setIsLoading,
+        isAuthenticated,
       }}
     >
       {children}
