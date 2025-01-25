@@ -1,53 +1,260 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Signup from "../pages/Signup";
-import Signin from "../pages/Signin";
-import PatientDetails from "../pages/Admin/PatientDetails";
-import DoctorDetails from "../pages/Admin/DoctorDetails";
-import PatientList from "../pages/Admin/PatientList";
-import DoctorsList from "../pages/Admin/DoctorsList";
-import AllAppointmentsDoctor from "../pages/Doctor/AllAppointmentsDoctor";
-import ManageAvailabilityCalendar from "../pages/Doctor/ManageAvailabilityCalendar";
-import MyAvailability from "../pages/Doctor/MyAvailability";
-import AllAppointmentsPatient from "../pages/Patient/AllAppointmentsPatient";
-import MyAppointments from "../pages/Patient/MyAppointments";
-import AllAppointmentsAdmin from "../pages/Admin/AllAppointmentsAdmin";
-import VerifyEmail from "../pages/VerifyEmail";
+import { lazy, Suspense } from "react";
+import Loader from "../components/Loader";
+const Signup = lazy(() => import("../pages/Signup"));
+const Signin = lazy(() => import("../pages/Signin"));
+const PatientDetails = lazy(() => import("../pages/Admin/PatientDetails"));
+const DoctorDetails = lazy(() => import("../pages/Admin/DoctorDetails"));
+const PatientList = lazy(() => import("../pages/Admin/PatientList"));
+const DoctorsList = lazy(() => import("../pages/Admin/DoctorsList"));
+const AllAppointmentsDoctor = lazy(() =>
+  import("../pages/Doctor/AllAppointmentsDoctor")
+);
+const ManageAvailabilityCalendar = lazy(() =>
+  import("../pages/Doctor/ManageAvailabilityCalendar")
+);
+const MyAvailability = lazy(() => import("../pages/Doctor/MyAvailability"));
+const AllAppointmentsPatient = lazy(() =>
+  import("../pages/Patient/AllAppointmentsPatient")
+);
+const MyAppointments = lazy(() => import("../pages/Patient/MyAppointments"));
+const AllAppointmentsAdmin = lazy(() => "../pages/Admin/AllAppointmentsAdmin");
+const VerifyEmail = lazy(() => import("../pages/VerifyEmail"));
+const Home = lazy(() => import("../pages/Home"));
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorBoundaryFallback from "../components/ErrorBoundaryFallback";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const AllRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Signup />} />
-      <Route path="/signin" element={<Signin />} />
-      <Route path="/admin/patientsList" element={<PatientList />}></Route>
-      <Route path="/admin/doctorsList" element={<DoctorsList />}></Route>
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={<Loader />}>
+            <ErrorBoundary
+              FallbackComponent={ErrorBoundaryFallback}
+              onReset={() => {}}
+            >
+              <Signup />
+            </ErrorBoundary>
+          </Suspense>
+        }
+      />
+      <Route
+        path="/signin"
+        element={
+          <Suspense fallback={<Loader />}>
+            <ErrorBoundary
+              FallbackComponent={ErrorBoundaryFallback}
+              onReset={() => {}}
+            >
+              <Signin />
+            </ErrorBoundary>
+          </Suspense>
+        }
+      />
+      <Route
+        path="/admin/patientsList"
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <PatientList />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
+      <Route
+        path="/admin/doctorsList"
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <DoctorsList />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
       <Route
         path="/admin/patientDetails/:id"
-        element={<PatientDetails />}
-      ></Route>
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <PatientDetails />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
       <Route
         path="/admin/doctorDetails/:id"
-        element={<DoctorDetails />}
-      ></Route>
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <DoctorDetails />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
       <Route
         path="/admin/allAppointment"
-        element={<AllAppointmentsAdmin />}
-      ></Route>
+        element={
+          <Suspense fallback={<Loader />}>
+            <ErrorBoundary
+              FallbackComponent={ErrorBoundaryFallback}
+              onReset={() => {}}
+            >
+              <AllAppointmentsAdmin />
+            </ErrorBoundary>
+          </Suspense>
+        }
+      />
       <Route
         path="/doctor/allAppointment"
-        element={<AllAppointmentsDoctor />}
-      ></Route>
-      <Route path="/doctor/myAppointmnet" element={<MyAvailability />}></Route>
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <AllAppointmentsDoctor />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
+      <Route
+        path="/doctor/myAppointmnet"
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <MyAvailability />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
       <Route
         path="/doctor/manageAvailability"
-        element={<ManageAvailabilityCalendar />}
-      ></Route>
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <ManageAvailabilityCalendar />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />{" "}
       <Route
         path="/patient/allAppointment"
-        element={<AllAppointmentsPatient />}
-      ></Route>
-      <Route path="/patient/myAppointmnet" element={<MyAppointments />}></Route>
-      <Route path="/verifyEmail/:token" element={<VerifyEmail />}></Route>
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <AllAppointmentsPatient />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
+      <Route
+        path="/patient/home"
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <Home />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
+      <Route
+        path="/patient/myAppointmnet"
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <MyAppointments />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
+      <Route
+        path="/verifyEmail/:token"
+        element={
+          <ProtectedRoute
+            element={
+              <Suspense fallback={<Loader />}>
+                <ErrorBoundary
+                  FallbackComponent={ErrorBoundaryFallback}
+                  onReset={() => {}}
+                >
+                  <VerifyEmail />
+                </ErrorBoundary>
+              </Suspense>
+            }
+          />
+        }
+      />
     </Routes>
   );
 };
