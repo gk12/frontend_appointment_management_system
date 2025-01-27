@@ -6,7 +6,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logoutUser } = useContext(UserAuthContext);
   return (
-    <div className="w-full h-[6rem]  bg-white p-6 shadow-slate-800 shadow-2xl flex justify-between">
+    <div className="w-full h-[6rem]  bg-white p-6  flex justify-between">
       <div className="p-2 ">
         <h3 className=" w-full p-2 rounded-xl text-center  text-yellow-700 font-bold text-lg">
           {/* {userName} */}
