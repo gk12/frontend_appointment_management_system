@@ -344,7 +344,7 @@ const AllAppointmentsPatient = () => {
                           {/* {isLoading && <Loader />}  complete it */}
                           {isLoading}
                           {availabilityData && !isLoading ? (
-                            availabilityData.length > 0 ? (
+                            availabilityData?.length > 0 ? (
                               availabilityData?.map((data, index) => (
                                 <tr
                                   key={index}

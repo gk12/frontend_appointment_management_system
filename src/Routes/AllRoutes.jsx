@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import Loader from "../components/Loader";
 const Signup = lazy(() => import("../pages/Signup"));
@@ -204,7 +204,7 @@ const AllRoutes = () => {
           />
         }
       />
-      <Route
+      {/* <Route
         path="/patient/home"
         element={
           <ProtectedRoute
@@ -220,7 +220,7 @@ const AllRoutes = () => {
             }
           />
         }
-      />
+      /> */}
       <Route
         path="/patient/myAppointmnet"
         element={
@@ -255,6 +255,8 @@ const AllRoutes = () => {
           />
         }
       />
+      <Route path="/home" element={<Home />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
