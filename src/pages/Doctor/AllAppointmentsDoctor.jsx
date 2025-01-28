@@ -4,14 +4,17 @@ import { toast } from "react-toastify";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
+import useDisableButton from "../../hooks/useDisableButton";
 
 const AllAppointmentsDoctor = () => {
   const [appointments, setAppointments] = useState([]);
   const [updateDataId, setUpdateDataId] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { handleButtonDisablity, handleResetButton, buttonDisable } =
+    useDisableButton();
   const updateAppointmentStatus = async () => {
+    handleButtonDisablity();
     try {
       console.log(newStatus, updateDataId, "newstatsus");
       const response = await axiosInstance.post(
@@ -26,6 +29,7 @@ const AllAppointmentsDoctor = () => {
       console.error(error);
       toast.error("Error updating appointment status");
     }
+    handleResetButton();
   };
   const fetchAppointments = async (pageNo) => {
     try {
@@ -149,6 +153,7 @@ const AllAppointmentsDoctor = () => {
                             setShowModal(true); // Open the modal
                             setUpdateDataId(data._id);
                           }}
+                          disabled={buttonDisable}
                           className="p-2 bg-blue-500 text-white rounded"
                         >
                           Update Status
