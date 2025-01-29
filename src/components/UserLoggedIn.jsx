@@ -5,15 +5,21 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { axiosInstance } from "../utils/axiosConfig";
 import UserAuthContext from "../context/UserAuthContext";
+import useDisableButton from "../hooks/useDisableButton";
 const signinValidation = Yup.object({
   email: Yup.string().required("Email is required").email("Invalid Email"),
   password: Yup.string().required("Password is required").min(8).max(16),
 });
+
 const UserLoggedIn = (props) => {
   const { userType } = props;
   const navigate = useNavigate();
   const { loginUser } = useContext(UserAuthContext);
+  const { buttonDisable, handleButtonDisablity, handleResetButton } =
+    useDisableButton();
+
   const handleSubmit = async (values) => {
+    handleButtonDisablity();
     console.log(values, "values");
     const { email, password } = values;
     try {
@@ -31,12 +37,13 @@ const UserLoggedIn = (props) => {
       } else if (userType === "doctor") {
         navigate("/doctor/allAppointment");
       } else {
-        navigate("/patient/allAppointment");
+        navigate("/patient/home");
       }
     } catch (error) {
-      toast.error("Authentication failed");
-      console.error(error);
+      toast.error(error.response.data.message);
+      console.error(error.response.data.message);
     }
+    handleResetButton();
   };
   return (
     <Formik
@@ -89,6 +96,7 @@ const UserLoggedIn = (props) => {
 
         <button
           type="submit"
+          disabled={buttonDisable}
           className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
           Signin

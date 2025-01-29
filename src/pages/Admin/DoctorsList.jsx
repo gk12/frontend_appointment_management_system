@@ -12,6 +12,7 @@ import {
   passwordRegExp,
   phoneRegExp,
 } from "../../utils/validateWithRegax";
+import useDisableButton from "../../hooks/useDisableButton";
 
 const addDoctorFormValidation = Yup.object({
   name: Yup.string().required("Name required").min(6).max(15),
@@ -29,10 +30,12 @@ const DoctorsList = () => {
   const [doctorsList, setDoctorsList] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { handleButtonDisablity, handleResetButton, buttonDisable } =
+    useDisableButton();
   // post api add Doctors here
   const handleSubmit = async (values) => {
     console.log(values, "values");
+    handleButtonDisablity();
     const {
       name,
       email,
@@ -63,6 +66,7 @@ const DoctorsList = () => {
       setToggleModel(true);
     }
     fetchData(currentPage);
+    handleResetButton();
   };
 
   const handlePageChange = (pageNo) => {
@@ -312,6 +316,7 @@ const DoctorsList = () => {
                         <div className="flex justify-end mt-4">
                           <button
                             type="submit"
+                            disabled={buttonDisable}
                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
                           >
                             Submit
