@@ -263,22 +263,43 @@ const Home = () => {
       </div>
 
       {/* footer */}
-      <div className="w-full h-[50dvh] border-2 border-black flex p-24 gap-16">
-        <div className="w-[25%] border-2 border-black">
-          <h1 className="font-bold text-2xl">Gaurav Doctor</h1>
+      <div className="w-full h-[50dvh] text-white flex p-24 gap-16 tracking-wider bg-[#13324F]">
+        <div className="w-[30%]  px-20 py-12 ">
+          <h1 className="font-bold text-2xl ">Gaurav Doctor</h1>
           <p>
-            The ultimate destination for <br />
-            all of your medical needs
+            The ultimate destination for <br />
+            all of your medical needs
           </p>
-          <div className="flex space-y-6">
+          <div className="flex gap-8 mt-8">
             <LiaFacebookSquare className="size-10" />
             <FaInstagram className="size-10" />
             <FiTwitter className="size-10" />
           </div>
         </div>
-        <div className="w-[25%] border-2 border-black"></div>
-        <div className="w-[25%] border-2 border-black"></div>
-        <div className="w-[25%] border-2 border-black"></div>
+        <div className="w-[25%]  px-20 py-12">
+          <h1 className="font-bold text-2xl">Explore</h1>
+          <p>Home</p>
+          <p>Surgery</p>
+          <p>OPD</p>
+          <p>Specialty</p>
+          <p>Consultation</p>
+        </div>
+        <div className="w-[25%]  px-20 py-12">
+          <h1 className="font-bold text-2xl">About Us</h1>
+          <p>Who we are</p>
+          <p>Our Vision</p>
+          <p>Our Team</p>
+          <p>Term & Condition</p>
+          <p>FAQs</p>
+        </div>
+        <div className="w-[25%]  px-20 py-12">
+          <h1 className="font-bold text-2xl">Contact</h1>
+          <p>+1234567890</p>
+          <p>doctor@gmail.com</p>
+          <p>sector 82,</p>
+          <p>Mohali,</p>
+          <p>Punjab</p>
+        </div>
       </div>
     </div>
   );
