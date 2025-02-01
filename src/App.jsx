@@ -1,20 +1,19 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import AllRoutes from "./Routes/AllRoutes";
 import { BrowserRouter } from "react-router-dom";
 import UserAuthContextProvider from "./context/UserAuthContextProvider";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 function App() {
-  const [count, setCount] = useState(0);
-
+  const queryClient = new QueryClient();
   return (
-    <UserAuthContextProvider>
-      <BrowserRouter>
-        <AllRoutes />
-      </BrowserRouter>
-    </UserAuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserAuthContextProvider>
+        <BrowserRouter>
+          <AllRoutes />
+        </BrowserRouter>
+      </UserAuthContextProvider>
+    </QueryClientProvider>
   );
 }
 
