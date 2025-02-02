@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import im from "../assets/Beautiful young female doctor looking at camera in the office..svg";
 import img2 from "../assets/section2Img.svg";
@@ -77,13 +77,126 @@ const Home = () => {
       image: s9,
     },
   ]);
-  console.log(cardData, "card");
+  const section1Ref = useRef(null);
+  const section2Ref = useRef(null);
+  const section3Ref = useRef(null);
+  const section4Ref = useRef(null);
+  const section5Ref = useRef(null);
+  const section6Ref = useRef(null);
+  function sectionScroll(ref) {
+    ref.current.scrollIntoView({ behavior: "smooth" });
+  }
+
+  const [activeSection, setActiveSection] = useState("section1");
+
+  // Intersection Observer to detect active section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.2 } // Trigger when 50% of the section is visible
+    );
+
+    // Observe each section
+    if (section1Ref.current) observer.observe(section1Ref.current);
+    if (section2Ref.current) observer.observe(section2Ref.current);
+    if (section3Ref.current) observer.observe(section3Ref.current);
+    if (section4Ref.current) observer.observe(section4Ref.current);
+    if (section5Ref.current) observer.observe(section5Ref.current);
+    if (section6Ref.current) observer.observe(section6Ref.current);
+
+    // Cleanup observer
+    return () => {
+      if (section1Ref.current) observer.unobserve(section1Ref.current);
+      if (section2Ref.current) observer.unobserve(section2Ref.current);
+      if (section3Ref.current) observer.unobserve(section3Ref.current);
+      if (section4Ref.current) observer.unobserve(section4Ref.current);
+      if (section5Ref.current) observer.unobserve(section5Ref.current);
+      if (section6Ref.current) observer.unobserve(section6Ref.current);
+    };
+  }, []);
   return (
-    <div className="w-full h-auto p-0 m-0 border-8 border-black  ">
-      <Navbar />
+    <div className="w-full h-auto p-0 m-0 relative ">
+      {/* navbar */}
+      <div className="w-full h-[6rem] py-6 px-16  flex justify-between fixed top-0 left-0 z-50">
+        <div className="p-2 ">
+          <h3 className=" w-full p-2 rounded-xl text-center  text-yellow-700 font-bold text-lg">
+            {/* {userName} */}
+            {/* {user?.name} */}
+            <p className="text-black text-2xl">
+              <span className="text-[#0086FF]">Adom</span> Doctor
+            </p>
+          </h3>
+        </div>
+        <div className="flex p-2 gap-16">
+          <button
+            className={`${
+              activeSection === "section1" ? "text-[#0086FF]" : "text-[#000000]"
+            }`}
+            onClick={() => sectionScroll(section1Ref)}
+          >
+            Home
+          </button>
+          <button
+            className={`${
+              // activeSectionFunc("section2")
+              activeSection === "section2" ? "text-[#0086FF]" : "text-[#000000]"
+            }`}
+            onClick={() => sectionScroll(section2Ref)}
+          >
+            Specialties
+          </button>
+          <button
+            className={`${
+              activeSection === "section3" ? "text-[#0086FF]" : "text-[#000000]"
+            }`}
+            onClick={() => sectionScroll(section3Ref)}
+          >
+            Doctors
+          </button>
+          <button
+            className={`${
+              activeSection === "section4" ? "text-[#0086FF]" : "text-[#000000]"
+            }`}
+            onClick={() => sectionScroll(section4Ref)}
+          >
+            OPD
+          </button>
+          <button
+            className={`${
+              activeSection === "section5" ? "text-[#0086FF]" : "text-[#000000]"
+            }`}
+            onClick={() => sectionScroll(section5Ref)}
+          >
+            Login
+          </button>
+        </div>
+        <div className="p-3 bg-[#0086FF] text-white rounded-lg">
+          <button>Book Now</button>
+        </div>
+        {/* <div className="flex w-full justify-end"> */}
+        {/* <button
+          onClick={() => {
+            logoutUser(), navigate("/signin");
+          }}
+          className=" w-[15%] rounded-lg bg-red-400 text-white font-bold text-lg"
+        >
+          Logout
+        </button> */}
+        {/* </div> */}
+      </div>
       {/* first screen */}
-      <div className="flex w-full  h-[87dvh] bg-[#e0eaf3]">
-        <div className="w-[50%] border-2  p-10 flex">
+      <div
+        className="flex w-full  h-[99dvh] bg-[#e0eaf3]"
+        ref={section1Ref}
+        id="section1"
+      >
+        <div className="w-[50%]   p-10 flex">
           <div className="flex flex-col justify-center w-[70%] space-y-8 pl-20">
             <h1 className="font-bold text-5xl tracking-wide">
               Get Expert
@@ -112,7 +225,7 @@ const Home = () => {
       </div>
 
       {/* second screen */}
-      <div className="w-full flex h-[70dvh] border-3 border-black ">
+      <div className="w-full flex h-[70dvh]  " ref={section2Ref} id="section2">
         <div className="w-[50%] p-24">
           <img src={img2} alt="" />
         </div>
@@ -135,7 +248,11 @@ const Home = () => {
       </div>
 
       {/* third screen */}
-      <div className="w-full h-[240dvh]  bg-[#e0eaf3]">
+      <div
+        className="w-full h-[240dvh]  bg-[#e0eaf3]"
+        ref={section3Ref}
+        id="section3"
+      >
         <div className="p-24 flex flex-col items-center ">
           <h1 className="font-bold text-5xl">Our Speciality</h1>
           <p>We provide the world class services with the |</p>
@@ -160,7 +277,7 @@ const Home = () => {
       </div>
 
       {/* fourth */}
-      <div className="h-[90dvh] w-full flex ">
+      <div className="h-[90dvh] w-full flex " ref={section4Ref} id="section4">
         <div className="h-full w-[50%]  flex gap-8 p-24">
           <div className="w-[50%]  h-[90%] ">
             <img src={s4_1} alt="" />
@@ -192,7 +309,11 @@ const Home = () => {
       </div>
 
       {/* fifth */}
-      <div className="w-full h-[100dvh]  bg-[#e0eaf3]">
+      <div
+        className="w-full h-[100dvh]  bg-[#e0eaf3]"
+        ref={section5Ref}
+        id="section5"
+      >
         <div className="w-full h-[50%] p-24">
           <h1 className="font-bold text-5xl">
             Read feedback about our <br />
@@ -263,7 +384,11 @@ const Home = () => {
       </div>
 
       {/* footer */}
-      <div className="w-full h-[50dvh] text-white flex p-24 gap-16 tracking-wider bg-[#13324F]">
+      <div
+        className="w-full h-[50dvh] text-white flex p-24 gap-16 tracking-wider bg-[#13324F]"
+        ref={section6Ref}
+        id="section6"
+      >
         <div className="w-[30%]  px-20 py-12 ">
           <h1 className="font-bold text-2xl ">Gaurav Doctor</h1>
           <p>
