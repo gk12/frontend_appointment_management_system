@@ -20,7 +20,10 @@ import doubleIcon from "../assets/sec5_icon.svg";
 import { FaInstagram } from "react-icons/fa";
 import { LiaFacebookSquare } from "react-icons/lia";
 import { FiTwitter } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 const Home = () => {
+  const navigate = useNavigate();
   const [cardData, setCardData] = useState([
     {
       title: "Dentistry",
@@ -173,11 +176,13 @@ const Home = () => {
             }`}
             onClick={() => sectionScroll(section5Ref)}
           >
-            Login
+            Logout
           </button>
         </div>
         <div className="p-3 bg-[#0086FF] text-white rounded-lg">
-          <button>Book Now</button>
+          <button onClick={() => navigate("/patient/allAppointment")}>
+            Book Now
+          </button>
         </div>
         {/* <div className="flex w-full justify-end"> */}
         {/* <button
@@ -211,10 +216,10 @@ const Home = () => {
               <input
                 type="search"
                 placeholder="search doctor in your location"
-                className="h-[3rem] rounded-lg w-[78%]   text-black"
+                className=" rounded-lg w-[78%]   text-black outline-none"
               />
-              <button className="w-[22%] h-[3rem] rounded-lg bg-[#0086FF]">
-                b
+              <button className="w-[20%] h-[3rem] rounded-lg bg-[#0086FF] p-4  ">
+                <FaSearch className="text-white ml-4" />
               </button>
             </div>
           </div>
@@ -255,7 +260,7 @@ const Home = () => {
       >
         <div className="p-24 flex flex-col items-center ">
           <h1 className="font-bold text-5xl">Our Speciality</h1>
-          <p>We provide the world class services with the |</p>
+          <p className="mt-4">We provide the world class services with the |</p>
           <p>best medical team!</p>
         </div>
         <div className="px-40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-36  w-full">
@@ -277,13 +282,13 @@ const Home = () => {
       </div>
 
       {/* fourth */}
-      <div className="h-[90dvh] w-full flex " ref={section4Ref} id="section4">
+      <div className="h-[98dvh] w-full flex " ref={section4Ref} id="section4">
         <div className="h-full w-[50%]  flex gap-8 p-24">
-          <div className="w-[50%]  h-[90%] ">
+          <div className="w-[50%]  h-[90%] space-y-4">
             <img src={s4_1} alt="" />
             <img src={s4_2} alt="" />
           </div>
-          <div className="w-[50%]  h-[90%]  mt-14">
+          <div className="w-[50%]  h-[90%]  mt-14 space-y-4">
             <img src={s4_3} alt="" />
             <img src={s4_4} alt="" />
           </div>
@@ -319,7 +324,9 @@ const Home = () => {
             Read feedback about our <br />
             Services and wonderful team!
           </h1>
-          <p>We take care of our patients just like a family</p>
+          <p className="mt-4">
+            We take care of our patients just like a family
+          </p>
           <p>member . Read the testimonials from our patients. </p>
         </div>
         <div className="w-full h-[50%]   px-24 pb-24 flex gap-8">
