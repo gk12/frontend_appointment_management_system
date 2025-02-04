@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import im from "../assets/Beautiful young female doctor looking at camera in the office..svg";
 import img2 from "../assets/section2Img.svg";
@@ -22,7 +22,9 @@ import { LiaFacebookSquare } from "react-icons/lia";
 import { FiTwitter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import UserAuthContext from "../context/UserAuthContext";
 const Home = () => {
+  const { logoutUser } = useContext(UserAuthContext);
   const navigate = useNavigate();
   const [cardData, setCardData] = useState([
     {
@@ -175,6 +177,21 @@ const Home = () => {
               activeSection === "section5" ? "text-[#0086FF]" : "text-[#000000]"
             }`}
             onClick={() => sectionScroll(section5Ref)}
+          >
+            Feedbacks
+          </button>
+          <button
+            className={`${
+              activeSection === "section6" ? "text-[#0086FF]" : "text-[#000000]"
+            }`}
+            onClick={() => sectionScroll(section6Ref)}
+          >
+            Contact Us
+          </button>
+          <button
+            onClick={() => {
+              logoutUser(), navigate("/signin");
+            }}
           >
             Logout
           </button>
