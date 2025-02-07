@@ -25,6 +25,7 @@ const Home = lazy(() => import("../pages/Home"));
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorBoundaryFallback from "../components/ErrorBoundaryFallback";
 import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRouteWrapper from "../components/ProtectedRouteWrapper";
 
 const AllRoutes = () => {
   return (
@@ -56,20 +57,20 @@ const AllRoutes = () => {
         }
       />
       <Route
+        path="/patient/home"
+        element={
+          <ProtectedRouteWrapper>
+            <Home />
+          </ProtectedRouteWrapper>
+        }
+      />
+
+      <Route
         path="/admin/patientsList"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <PatientList />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <PatientList />
+          </ProtectedRouteWrapper>
         }
       />
       <Route
@@ -77,14 +78,9 @@ const AllRoutes = () => {
         element={
           <ProtectedRoute
             element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <DoctorsList />
-                </ErrorBoundary>
-              </Suspense>
+              <ProtectedRouteWrapper>
+                <DoctorsList />
+              </ProtectedRouteWrapper>
             }
           />
         }
@@ -94,14 +90,9 @@ const AllRoutes = () => {
         element={
           <ProtectedRoute
             element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <PatientDetails />
-                </ErrorBoundary>
-              </Suspense>
+              <ProtectedRouteWrapper>
+                <PatientDetails />
+              </ProtectedRouteWrapper>
             }
           />
         }
@@ -109,99 +100,49 @@ const AllRoutes = () => {
       <Route
         path="/admin/doctorDetails/:id"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <DoctorDetails />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <DoctorDetails />
+          </ProtectedRouteWrapper>
         }
       />
       <Route
         path="/admin/allAppointment"
         element={
-          <Suspense fallback={<Loader />}>
-            <ErrorBoundary
-              FallbackComponent={ErrorBoundaryFallback}
-              onReset={() => {}}
-            >
-              <AllAppointmentsAdmin />
-            </ErrorBoundary>
-          </Suspense>
+          <ProtectedRouteWrapper>
+            <AllAppointmentsAdmin />
+          </ProtectedRouteWrapper>
         }
       />
       <Route
         path="/doctor/allAppointment"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <AllAppointmentsDoctor />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <AllAppointmentsDoctor />
+          </ProtectedRouteWrapper>
         }
       />
       <Route
         path="/doctor/myAppointmnet"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <MyAvailability />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <MyAvailability />
+          </ProtectedRouteWrapper>
         }
       />
       <Route
         path="/doctor/manageAvailability"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <ManageAvailabilityCalendar />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <ManageAvailabilityCalendar />
+          </ProtectedRouteWrapper>
         }
-      />{" "}
+      />
       <Route
         path="/patient/allAppointment"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <AllAppointmentsPatient />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <AllAppointmentsPatient />
+          </ProtectedRouteWrapper>
         }
       />
       {/* <Route
@@ -224,38 +165,19 @@ const AllRoutes = () => {
       <Route
         path="/patient/myAppointmnet"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <MyAppointments />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <MyAppointments />
+          </ProtectedRouteWrapper>
         }
       />
       <Route
         path="/verifyEmail/:token"
         element={
-          <ProtectedRoute
-            element={
-              <Suspense fallback={<Loader />}>
-                <ErrorBoundary
-                  FallbackComponent={ErrorBoundaryFallback}
-                  onReset={() => {}}
-                >
-                  <VerifyEmail />
-                </ErrorBoundary>
-              </Suspense>
-            }
-          />
+          <ProtectedRouteWrapper>
+            <VerifyEmail />
+          </ProtectedRouteWrapper>
         }
       />
-      <Route path="/home" element={<Home />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
