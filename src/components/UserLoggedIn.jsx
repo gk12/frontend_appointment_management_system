@@ -30,18 +30,17 @@ const UserLoggedIn = (props) => {
       });
       loginUser(response.data.user);
       toast.success("Logged in successfully");
-
+      console.log(userType, "userTyep-------------------");
       // Navigate based on the user role
-      if (userType === "admin") {
-        navigate("/admin/allAppointment");
-      } else if (userType === "doctor") {
-        navigate("/doctor/allAppointment");
-      } else {
+      if (userType === "patient") {
         navigate("/patient/home");
+      } else {
+        navigate(`/${userType}/allAppointment`);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
-      console.error(error.response.data.message);
+      console.log(error, "error");
+      // toast.error(error.response.data.message);
+      // console.error(error.response.data.message);
     }
     handleResetButton();
   };
