@@ -10,10 +10,19 @@ import useDisableButton from "../../hooks/useDisableButton";
 
 const ManageAvailabilityCalendar = () => {
   const [toggleModel, setToggleModel] = useState("");
-  const [minDate, setMinDate] = useState("");
+  const [minDateForStartTime, setMinDateForStartTime] = useState("");
+  const [minDateForEndTime, setMinDateForEndTime] = useState("");
   const [eventListData, setEventListData] = useState([]);
   const { user } = useContext(UserAuthContext);
   const [doctorId, setDoctorId] = useState(user?.id);
+  const [manageStartTime, setManageStartTime] = useState({
+    isStart: false,
+    val: "",
+  });
+  const [manageEndTime, setManageEndTime] = useState({
+    isEnd: false,
+    val: "",
+  });
   const [formData, setFormData] = useState({
     availability: "true",
     startTime: "",
@@ -24,6 +33,12 @@ const ManageAvailabilityCalendar = () => {
   function handleChange(e) {
     const { name, value } = e.target;
     console.log(name, value);
+    if (name === "endTime") {
+      setManageEndTime({ isEnd: true, val: value });
+    }
+    if (name === "startTime") {
+      setManageStartTime({ isStart: true, val: value });
+    }
     setFormData({
       ...formData,
       [name]: value,
@@ -70,16 +85,39 @@ const ManageAvailabilityCalendar = () => {
       toast.error(error);
     }
   }
-  // useEffect(() => {
-  //   const currentDate = new Date();
-  //   const formattedDate = currentDate.toISOString().split("T")[0];
-  //   const formattedTime = currentDate
-  //     .toISOString()
-  //     .split("T")[1]
-  //     .substring(0, 5); // Get HH:mm
-  //   setMinDate(`${formattedDate}T${formattedTime}`);
-  //   getCalendarData();
-  // }, []);
+
+  function handleTodayMinDateTime() {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split("T")[0];
+    const formattedTime = currentDate
+      .toISOString()
+      .split("T")[1]
+      .substring(0, 5); // Get HH:mm
+
+    return `${formattedDate}T${formattedTime}`;
+  }
+  function dateTimeFormating(dateVal) {
+    const currentDate = new Date(dateVal);
+    const formattedDate = currentDate.toISOString().split("T")[0];
+    const formattedTime = currentDate
+      .toISOString()
+      .split("T")[1]
+      .substring(0, 5); // Get HH:mm
+
+    return `${formattedDate}T${formattedTime}`;
+  }
+  useEffect(() => {
+    if (manageStartTime.isStart) {
+      const formatedDate = dateTimeFormating(manageStartTime.val);
+      setMinDateForEndTime(formatedDate);
+    }
+    if (manageEndTime.isEnd) {
+      const formatedDate = dateTimeFormating(manageEndTime.val);
+      setMinDateForStartTime(formatedDate);
+    }
+    getCalendarData();
+  }, [manageStartTime, manageEndTime]);
+
   useEffect(() => {
     setDoctorId(user?.id);
     getCalendarData();
@@ -145,7 +183,8 @@ const ManageAvailabilityCalendar = () => {
                           type="datetime-local"
                           id="startTime"
                           name="startTime"
-                          min={minDate}
+                          max={minDateForStartTime}
+                          min={handleTodayMinDateTime()}
                           value={formData.startTime}
                           onChange={handleChange}
                           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -162,7 +201,7 @@ const ManageAvailabilityCalendar = () => {
                           type="datetime-local"
                           id="endTime"
                           name="endTime"
-                          min={minDate}
+                          min={minDateForEndTime}
                           value={formData.endTime}
                           onChange={handleChange}
                           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
