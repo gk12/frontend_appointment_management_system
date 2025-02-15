@@ -102,6 +102,17 @@ const MyAvailability = () => {
       setCurrentPage(pageNo);
     }
   };
+
+  function handleTodayMinDateTime() {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split("T")[0];
+    const formattedTime = currentDate
+      .toISOString()
+      .split("T")[1]
+      .substring(0, 5); // Get HH:mm
+
+    return `${formattedDate}`;
+  }
   return (
     <div className="w-full h-screen flex ">
       <Sidebar />
@@ -140,6 +151,7 @@ const MyAvailability = () => {
                           type="date"
                           id="availableDate"
                           name="availableDate"
+                          min={handleTodayMinDateTime()}
                           value={formData.availableDate}
                           onChange={handleChange}
                           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
