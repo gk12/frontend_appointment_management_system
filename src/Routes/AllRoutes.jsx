@@ -19,7 +19,9 @@ const AllAppointmentsPatient = lazy(() =>
   import("../pages/Patient/AllAppointmentsPatient")
 );
 const MyAppointments = lazy(() => import("../pages/Patient/MyAppointments"));
-const AllAppointmentsAdmin = lazy(() => "../pages/Admin/AllAppointmentsAdmin");
+const AllAppointmentsAdmin = lazy(() =>
+  import("../pages/Admin/AllAppointmentsAdmin")
+);
 const VerifyEmail = lazy(() => import("../pages/VerifyEmail"));
 const Home = lazy(() => import("../pages/Home"));
 import { ErrorBoundary } from "react-error-boundary";

@@ -3,6 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { axiosInstance } from "../../utils/axiosConfig";
 import Pagination from "../../components/Pagination";
+import { toast } from "react-toastify";
 
 const AllAppointmentsAdmin = () => {
   const [totalPages, setTotalPages] = useState(0);
