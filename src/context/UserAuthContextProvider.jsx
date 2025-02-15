@@ -16,6 +16,7 @@ const UserAuthContextProvider = ({ children }) => {
       }
     } catch (error) {
       setUser(null);
+      setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }
@@ -23,12 +24,14 @@ const UserAuthContextProvider = ({ children }) => {
 
   async function loginUser(data) {
     setUser(data);
+    setIsAuthenticated(true);
   }
   async function logoutUser() {
     console.log("logout");
     const response = await axiosInstance.post("api/auth/logout");
     setUser(null);
   }
+
   useEffect(() => {
     authCheck();
   }, []);
@@ -42,6 +45,7 @@ const UserAuthContextProvider = ({ children }) => {
         isLoading,
         setIsLoading,
         isAuthenticated,
+        authCheck,
       }}
     >
       {children}
