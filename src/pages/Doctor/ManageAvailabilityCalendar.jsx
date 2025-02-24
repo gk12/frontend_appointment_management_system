@@ -14,7 +14,6 @@ const ManageAvailabilityCalendar = () => {
   const [minDateForEndTime, setMinDateForEndTime] = useState("");
   const [eventListData, setEventListData] = useState([]);
   const { user } = useContext(UserAuthContext);
-  const [doctorId, setDoctorId] = useState(user?.id);
   const [manageStartTime, setManageStartTime] = useState({
     isStart: false,
     val: "",
@@ -51,14 +50,13 @@ const ManageAvailabilityCalendar = () => {
     try {
       const response = await axiosInstance.post(
         "api/doctor/createAvailability",
-        { availability, startTime, endTime, doctorId }
+        { availability, startTime, endTime, doctorId: user?._id }
       );
       setFormData({
         availability: "",
         startTime: "",
         endTime: "",
       });
-      setDoctorId("");
       setToggleModel(false);
       getCalendarData();
       toast.success("Availbility Added Successfully");
@@ -119,9 +117,8 @@ const ManageAvailabilityCalendar = () => {
   }, [manageStartTime, manageEndTime]);
 
   useEffect(() => {
-    setDoctorId(user?.id);
     getCalendarData();
-  }, [user]);
+  }, []);
   return (
     <div className="w-full h-screen flex ">
       <Sidebar />

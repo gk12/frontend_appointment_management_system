@@ -8,6 +8,8 @@ import {
   addDays,
   isSameMonth,
   isSameDay,
+  isBefore,
+  startOfDay,
 } from "date-fns";
 const PatientDashboardCalendar = ({
   selectedDate,
@@ -53,29 +55,41 @@ const PatientDashboardCalendar = ({
     const monthEnd = endOfMonth(monthStart);
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
-
     const dates = [];
     let day = startDate;
+    const today = startOfDay(new Date());
 
     while (day <= endDate) {
       const week = [];
       for (let i = 0; i < 7; i++) {
         const currentDay = day;
-        week.push(
-          <div
-            key={currentDay}
-            className={`p-2 border text-center cursor-pointer ${
-              !isSameMonth(currentDay, monthStart)
-                ? "bg-gray-100 text-gray-400"
-                : isSameDay(currentDay, selectedDate)
-                ? "bg-blue-500 text-white"
-                : "hover:bg-blue-100"
-            }`}
-            onClick={() => onDateSelect(currentDay)}
-          >
-            {format(currentDay, "d")}
-          </div>
-        );
+        const isPast = isBefore(currentDay, today); // Check if the current day is before today
+        // Only render days that belong to the current month
+        if (isSameMonth(currentDay, monthStart)) {
+          week.push(
+            <div
+              key={currentDay}
+              className={`p-2 border border-gray-400 text-center cursor-pointer ${
+                isSameDay(currentDay, selectedDate)
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-blue-100"
+              } ${
+                isPast ? "bg-gray-200 text-gray-500 pointer-events-none" : ""
+              }`} // Inactive past days
+              onClick={() => !isPast && onDateSelect(currentDay)} // Disable click for past days
+            >
+              {format(currentDay, "d")}
+            </div>
+          );
+        } else {
+          // If the day is from another month, push an empty div or skip it.
+          week.push(
+            <div
+              key={currentDay}
+              className="p-2 border border-gray-400 text-center"
+            ></div>
+          );
+        }
         day = addDays(day, 1);
       }
       dates.push(
