@@ -1,9 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { axiosInstance } from "../utils/axiosConfig";
 import { FaInfoCircle } from "react-icons/fa";
 import {
   emailRegExp,
@@ -11,6 +9,7 @@ import {
   phoneRegExp,
 } from "../utils/validateWithRegax";
 import useDisableButton from "../hooks/useDisableButton";
+import { useSignup } from "../hooks/useSignup";
 
 const signupValidation = Yup.object({
   name: Yup.string().required("Name is required").min(4).max(16),
@@ -34,23 +33,23 @@ const signupValidation = Yup.object({
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { mutate, isError, data, error } = useSignup();
   const { buttonDisable, handleButtonDisablity, handleResetButton } =
     useDisableButton();
   const handleSubmit = async (values) => {
     handleButtonDisablity();
-    // event.preventDefault();
-    // Handle form submission logic here
     const { name, email, phone, password } = values;
+    console.log(values);
     try {
-      const response = await axiosInstance.post(`api/auth/authRegister`, {
-        name,
-        email,
-        phone,
-        password,
-        type: "patient",
-      });
-      toast.success("Patient Registered successfully");
-      navigate("/signin");
+      mutate({ name, email, phone, password });
+      if (isError) {
+        toast.error(error.response.data);
+      }
+      console.log(data, "data is");
+      if (data) {
+        toast.success(data.message);
+        navigate("/signin");
+      }
     } catch (error) {
       toast.error(error);
       console.log(error);

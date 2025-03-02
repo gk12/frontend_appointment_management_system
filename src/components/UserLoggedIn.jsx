@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { axiosInstance } from "../utils/axiosConfig";
 import UserAuthContext from "../context/UserAuthContext";
 import useDisableButton from "../hooks/useDisableButton";
+import { useSignin } from "../hooks/useSignin";
 const signinValidation = Yup.object({
   email: Yup.string().required("Email is required").email("Invalid Email"),
   password: Yup.string().required("Password is required").min(8).max(16),
@@ -13,6 +13,7 @@ const signinValidation = Yup.object({
 
 const UserLoggedIn = (props) => {
   const { userType } = props;
+  const { mutate, isLoading, isError, error, isSuccess, data } = useSignin();
   const navigate = useNavigate();
   const { loginUser } = useContext(UserAuthContext);
   const { buttonDisable, handleButtonDisablity, handleResetButton } =
@@ -23,19 +24,19 @@ const UserLoggedIn = (props) => {
     console.log(values, "values");
     const { email, password } = values;
     try {
-      const response = await axiosInstance.post("api/auth/authLogin", {
-        email,
-        password,
-        type: userType,
-      });
-      loginUser(response.data.user);
-      toast.success("Logged in successfully");
-      console.log(userType, "userTyep-------------------");
-      // Navigate based on the user role
-      if (userType === "patient") {
-        navigate("/patient/home");
-      } else {
-        navigate(`/${userType}/allAppointment`);
+      mutate({ email, password, type: userType });
+      console.log(error, isError, "error");
+      if (isError) {
+        toast.error(error.response.data);
+      }
+      if (data) {
+        loginUser(data.user);
+        toast.success("Logged in successfully");
+        if (userType === "patient") {
+          navigate("/patient/home");
+        } else {
+          navigate(`/${userType}/allAppointment`);
+        }
       }
     } catch (error) {
       console.log(error, "error");
